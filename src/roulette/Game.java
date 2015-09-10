@@ -11,12 +11,13 @@ import util.ConsoleReader;
 public class Game {
     // name of the game
     private static final String DEFAULT_NAME = "Roulette";
+
     // bets player can make
     private Bet[] myPossibleBets = { 
-        new Bet("Red or Black", 1),
-        new Bet("Odd or Even", 1),
-        new Bet("Three in a Row", 11)
-    };
+            new RedBlack(1),
+            new OddEven(1),
+            new Three(11)
+        };
     private Wheel myWheel;
 
     /**
@@ -78,19 +79,8 @@ public class Game {
      * @param whichBet specific bet chosen by the user
      */
     private String placeBet (int whichBet) {
-        String result = "";
-        if (whichBet == 0) {
-            result = ConsoleReader.promptOneOf("Please bet", Wheel.BLACK, Wheel.RED);
-        }
-        else if (whichBet == 1) {
-            result = ConsoleReader.promptOneOf("Please bet", "even", "odd");
-        }
-        else if (whichBet == 2) {
-            result = "" + ConsoleReader.promptRange("Enter first of three consecutive numbers",
-                                                    1, Wheel.NUM_SPOTS - 3);
-        }
         System.out.println();
-        return result;
+        return myPossibleBets[whichBet].makeBet();
     }
 
     /**
@@ -100,19 +90,6 @@ public class Game {
      * @param betChoice specific value user chose to try to win the bet
      */
     private boolean betIsMade (int whichBet, String betChoice) {
-        if (whichBet == 0) {
-            return myWheel.getColor().equals(betChoice);
-        }
-        else if (whichBet == 1) {
-            return (myWheel.getNumber() % 2 == 0 && betChoice.equals("even")) ||
-                   (myWheel.getNumber() % 2 == 1 && betChoice.equals("odd"));
-        }
-        else if (whichBet == 2) {
-            int start = Integer.parseInt(betChoice);
-            return (start <= myWheel.getNumber() && myWheel.getNumber() < start + 3);
-        }
-        else {
-            return false;
-        }
+    	return myPossibleBets[whichBet].winBet(betChoice, myWheel);
     }
 }
